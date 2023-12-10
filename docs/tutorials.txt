@@ -1,0 +1,5 @@
+https://medium.com/mlearning-ai/building-a-neural-network-zoo-from-scratch-the-long-short-term-memory-network-1cec5cf31b7
+
+https://github.com/nicklashansen/rnn_lstm_from_scratch/blob/master/RNN_LSTM_from_scratch.ipynb
+
+https://www.tensorflow.org/tutorials/structured_data/time_series
