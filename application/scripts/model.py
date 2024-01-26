@@ -1,20 +1,13 @@
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn import preprocessing
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.models import save_model
 from tensorflow.keras.layers import LSTM, Dense
 from tensorflow import keras
 from tensorflow.keras import layers
 from kerastuner import Objective
-import sys
-import subprocess
 from kerastuner.tuners import RandomSearch
-import matplotlib.pyplot as plt
 from keras import regularizers
-from keras.callbacks import EarlyStopping
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import LogisticRegression
 
 
 class LSTM_v1:
@@ -55,3 +48,24 @@ class LSTM_v1:
         best_model = tuner.get_best_models(num_models=1)[0]
         self.model = best_model
         return best_model
+
+
+class LogisticRegression_v1:
+
+    def __init__(self, X_train, X_test, y_train, y_test):
+        self.model = None
+        self.X_train = X_train
+        self.X_test = X_test
+        self.y_train = y_train
+        self.y_test = y_test
+
+    def build_tuned_model(self, param_grid: dict):
+        # Define the model
+        model = LogisticRegression()
+        # Use GridSearchCV to tune the hyperparameters
+        clf = GridSearchCV(model, param_grid, cv=5, verbose=0)
+        # Fit the model to the training data
+        best_model = clf.fit(self.X_train, self.y_train)
+
+        return best_model
+

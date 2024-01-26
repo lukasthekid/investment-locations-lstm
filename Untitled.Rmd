@@ -9,12 +9,13 @@ output: pdf_document
 #install.packages("readxl")
 library("readxl")
 
-load("data/Burtscher_countrydyadicvars.RData")
-load("data/Burtscher_FDI_locationchoice.RData")
-data<- read_excel("data/Burtscher_codebook.xls")
-data2<- read_excel("data/Burtscher_codebook2.xls")
+#load("data/Burtscher_countrydyadicvars.RData")
+#load("data/Burtscher_FDI_locationchoice.RData")
+load("data/Burtscher_FDI_locationchoice_v2.RData")
+#data<- read_excel("data/Burtscher_codebook.xls")
+#data2<- read_excel("data/Burtscher_codebook2.xls")
 
 #write.csv(cl2, "data/countrydyadicvars.csv", row.names=FALSE)
 
-#write.csv(invest.df2, "data/fdi.csv", row.names=FALSE)
+write.csv(invest.df2, "data/fdi_new.csv", row.names=FALSE)
 ```
