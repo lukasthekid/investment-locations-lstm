@@ -48,7 +48,6 @@ def get_recommendation_log(year:int, country:str, isin:str):
     # get all countries the companys source country invested to in that year
     df_country_grouped = df_country[(df_country['year'] == year) & (df_country['cowc_source'] == country)] \
         .groupby('cowc_dest').first().reset_index()
-
     merger = Merger(df_country=df_country_grouped, df_fdi=df_fdi_filtered)
     X = merger.get_result()
     df_model_X = df_model.drop(['invest_actual'], axis=1)
@@ -91,6 +90,10 @@ if year:
         df_fdi_year_country = df_fdi_year[df_fdi_year['cowc_source'] == country]
         available_isin = df_fdi_year_country['isin'].unique()
         isin = st.selectbox('Select an ISIN', options=sorted(available_isin))
+        if isin:
+            sic = df_fdi[df_fdi['isin'] == isin]['sic'].iloc[0]
+            st.write(f"Industrial Code of that Company: {str(sic)} look that code up at: "
+                     f"https://www.osha.gov/data/sic-search?field_sic_number_value={str(sic)}&title_and_body=")
 
 if st.button('Get Recommendations'):
     res = get_recommendation(year, country, isin)
@@ -118,11 +121,5 @@ df_fdi_year_cowc_source = df_fdi_year[df_fdi_year['cowc_source'].isin(available_
 # Get Recommendation Button
 #if st.button('Get Recommendation'):
 #    recommendation = get_recommendation(isin, year)
-#    st.dataframe(recommendation.head())
+#    st.dataframe(recommendation.head()
 
-if __name__ == '__main__':
-
-    g = get_recommendation(2009, 'DE', 'DE0005297204')
-    g1 = get_recommendation_log(2009, 'DE', 'DE0005297204')
-    print(g.head())
-    print(g1.head())
