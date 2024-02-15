@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import sklearn.linear_model
 from sklearn.model_selection import train_test_split
 import warnings
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
@@ -6,6 +8,7 @@ from sklearn.metrics import classification_report, confusion_matrix, roc_auc_sco
 import matplotlib.pyplot as plt
 import pickle
 from model import LSTM_v1, LogisticRegression_v1
+from tensorflow import keras
 
 
 def plot_results(history):
@@ -36,7 +39,7 @@ def evaluate_keras_model(model):
     # Print the best hyperparameters
     print("\n")
     print("LSTM Model")
-    y_pred = model.predict(X_test)
+    y_pred = model.predict(X_test_tf)
 
     # Print the confusion matrix
     print("Confusion Matrix:")
@@ -69,29 +72,35 @@ def evaluate_sklearn_model(model):
     print("AUC-ROC:")
     print(roc_auc_score(y_test, y_pred_proba[:, 1]))
 
+    # Plot feature importance
+    model = model.best_estimator_
+    feature_importance = np.abs(model.coef_[0])
+    feature_names = model.feature_names_in_
+    fig, ax = plt.subplots()
+    ax.barh(feature_names, feature_importance, color='skyblue')
+    ax.invert_yaxis()
+    ax.set_xlabel('Importance')
+    ax.set_ylabel('Features')
+    ax.set_title('Feature Importance')
+
+    plt.tight_layout()
+    plt.savefig("../../plots/model_regression_importance.png", dpi=300)
+
+    #plt.show()
 
 
-if __name__ == '__main__':
-    # subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'keras-tuner'])
-    warnings.simplefilter("ignore", UserWarning)
 
-    df = pd.read_csv("../../data/preprocessed/preprocessed_data.csv")
-    #df_streamlit_test = pd.read_csv("../../data/test_str.csv")
-    X_train, X_test, y_train, y_test = train_test_split(df.drop('invest_actual', axis=1), df['invest_actual'],
-                                                        test_size=0.33, random_state=42, stratify=df['invest_actual'])
-
-    # Reshape input to be 3D [samples, timesteps, features]
-    X_train_tf = X_train.values.reshape((X_train.shape[0], 1, X_train.shape[1]))
-    X_test_tf = X_test.values.reshape((X_test.shape[0], 1, X_test.shape[1]))
-
-    lstm = LSTM_v1(X_train_tf, X_test_tf, y_train, y_test)
+def start_model_training():
+    lstm = LSTM_v1(X_train_tf, X_val_tf, y_train_tf, y_val_tf)
     best_model = lstm.get_best_model()
-    history = best_model.fit(X_train_tf, y_train, epochs=50, batch_size=None, validation_data=(X_test_tf, y_test), verbose=2,
+    history = best_model.fit(X_train_tf, y_train_tf, epochs=20, batch_size=None, validation_data=(X_val_tf, y_val_tf),
+                             verbose=2,
                              shuffle=False)
 
     plot_results(history)
     best_model.save("../../data/model/lstm.keras")
-    #evaluate_keras_model(best_model)
+    print("Keras Model saved and finished training \n \n")
+    # evaluate_keras_model(best_model)
 
     # build logistic regression model
     reg_model = LogisticRegression_v1(X_train, X_test, y_train, y_test)
@@ -103,3 +112,38 @@ if __name__ == '__main__':
     # Save the model to a file
     with open('../../data/model/log_reg_model.pkl', 'wb') as f:
         pickle.dump(reg_model, f)
+
+    print("ScLearn Model saved and finished training")
+
+
+
+
+if __name__ == '__main__':
+    #define data
+    # subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'keras-tuner'])
+    warnings.simplefilter("ignore", UserWarning)
+
+    df = pd.read_csv("../../data/preprocessed/preprocessed_data.csv")
+    # basic split for sklearn models
+    X_train, X_test, y_train, y_test = train_test_split(df.drop('invest_actual', axis=1), df['invest_actual'],
+                                                        test_size=0.33, random_state=42, stratify=df['invest_actual'])
+
+    # Further splitting for the keras models
+    X_train_tf, X_val_tf, y_train_tf, y_val_tf = train_test_split(X_train, y_train, test_size=0.2, random_state=42,
+                                                                  stratify=y_train)
+
+    # Reshape input to be 3D [samples, timesteps, features]
+    X_train_tf = X_train_tf.values.reshape((X_train_tf.shape[0], 1, X_train_tf.shape[1]))
+    X_val_tf = X_val_tf.values.reshape((X_val_tf.shape[0], 1, X_val_tf.shape[1]))
+    X_test_tf = X_test.values.reshape((X_test.shape[0], 1, X_test.shape[1]))
+
+    #start training
+    #start_model_training()
+    #evaluate
+    model_lstm = keras.models.load_model("../../data/model/lstm.keras")
+    with open('../../data/model/log_reg_model.pkl', 'rb') as f:
+        model_lr = pickle.load(f)
+
+    #evaluate_keras_model(model_lstm)
+    evaluate_sklearn_model(model_lr)
+
