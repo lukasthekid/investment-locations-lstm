@@ -1,12 +1,9 @@
 # python 3.10 required
-import numpy as np
-import pandas as pd
-import sys
-import pycountry
 import pickle
 
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
+import numpy as np
+import pandas as pd
+import pycountry
 
 
 class CountryPreprocessor:
@@ -95,7 +92,7 @@ class FdiPreprocessor:
 
 
 class Merger:
-    def __init__(self, df_country: pd.DataFrame, df_fdi: pd.DataFrame, scaler_path='../data/model/result-scaler.pkl'):
+    def __init__(self, df_country: pd.DataFrame, df_fdi: pd.DataFrame, scaler_path='data/model/result-scaler.pkl'):
         self.df_country = df_country
         self.df_fdi = df_fdi
 
@@ -112,8 +109,8 @@ class Merger:
         with open(scaler_path, 'rb') as f:
             scaler = pickle.load(f)
 
-        #print(result.columns)
-        #print(result.shape)
+        # print(result.columns)
+        # print(result.shape)
 
         columns_to_scale = ['year', 'foundingyear']
         result[columns_to_scale] = scaler.transform(result[columns_to_scale])

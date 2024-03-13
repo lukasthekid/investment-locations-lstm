@@ -1,13 +1,11 @@
-import numpy as np
-import pandas as pd
-from tensorflow.keras.layers import LSTM, Dense
-from tensorflow import keras
-from tensorflow.keras import layers
+from keras import regularizers
 from kerastuner import Objective
 from kerastuner.tuners import RandomSearch
-from keras import regularizers
-from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras.layers import Dense
 
 
 class LSTM_v1:
@@ -68,4 +66,3 @@ class LogisticRegression_v1:
         best_model = clf.fit(self.X_train, self.y_train)
 
         return best_model
-
