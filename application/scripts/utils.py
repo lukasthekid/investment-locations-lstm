@@ -38,6 +38,7 @@ def convert_iso3_to_iso2(iso3):
     else:
         return np.nan
 
+
 def get_country_name(iso2):
     try:
         return pycountry.countries.get(alpha_2=iso2).name
@@ -56,7 +57,7 @@ class FdiPreprocessor:
             self.df['invest_actual'] = self.df['invest_actual'].fillna(0)
             self.df['peers'] = self.df['peers'].fillna(0)
         except AttributeError:
-            #if only one observation than this is always Attribute error
+            # if only one observation than this is always Attribute error
             pass
 
         threshold = 0.4
@@ -94,25 +95,25 @@ class FdiPreprocessor:
 
 
 class Merger:
-    def __init__(self, df_country: pd.DataFrame, df_fdi: pd.DataFrame):
+    def __init__(self, df_country: pd.DataFrame, df_fdi: pd.DataFrame, scaler_path='../data/model/result-scaler.pkl'):
         self.df_country = df_country
         self.df_fdi = df_fdi
 
-        #simulate a tupple of company and country
+        # simulate a tupple of company and country
         result = pd.merge(df_fdi, df_country, left_on=['year', 'cowc_source'],
                           right_on=['year', 'cowc_source'], how='inner')
         result.sort_values('year', inplace=True)
 
-        #keep the destination country data
+        # keep the destination country data
         result['cowc_dest'] = result['cowc_dest_y']
-        #result['cowc_dest'] = result['cowc_dest_y']
-        result.drop(['cowc_dest_x','cowc_dest_y'], axis=1, inplace=True)
-        #print(result.columns)
-        with open('../data/model/result-scaler.pkl', 'rb') as f:
+        # result['cowc_dest'] = result['cowc_dest_y']
+        result.drop(['cowc_dest_x', 'cowc_dest_y'], axis=1, inplace=True)
+        # print(result.columns)
+        with open(scaler_path, 'rb') as f:
             scaler = pickle.load(f)
 
-        print(result.columns)
-        print(result.shape)
+        #print(result.columns)
+        #print(result.shape)
 
         columns_to_scale = ['year', 'foundingyear']
         result[columns_to_scale] = scaler.transform(result[columns_to_scale])
