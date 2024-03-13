@@ -1,14 +1,14 @@
-import pandas as pd
-import numpy as np
-import sklearn.linear_model
-from sklearn.model_selection import train_test_split
+import pickle
 import warnings
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
 
 import matplotlib.pyplot as plt
-import pickle
-from model import LSTM_v1, LogisticRegression_v1
+import numpy as np
+import pandas as pd
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
+from sklearn.model_selection import train_test_split
 from tensorflow import keras
+
+from model import LSTM_v1, LogisticRegression_v1
 from utils import Merger
 
 
@@ -234,6 +234,7 @@ if __name__ == '__main__':
 
     # start training
     # start_model_training()
+
     # evaluate
     model_lstm = keras.models.load_model("../../data/model/lstm.keras")
     with open('../../data/model/log_reg_model.pkl', 'rb') as f:
@@ -241,4 +242,4 @@ if __name__ == '__main__':
 
     # evaluate_keras_model(model_lstm)
     # evaluate_sklearn_model(model_lr)
-    evaluate_top5_and_top10(model_lstm, model_lr, df)
+    # evaluate_top5_and_top10(model_lstm, model_lr, df)
