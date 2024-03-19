@@ -27,3 +27,15 @@ After teh model is build you can test the streamlit application to get your firs
 
 ## Evaluation
 This is also a jupyter notebook you can use together with the recommender system. There we evaluate the recommendations given by the models. You can find similar companies based on your chosen one and you can dive deeper in the behaviour of the models. 
+
+## UI and Usage
+
+select a Year and a Country you want to consider
+
+![alt text](https://github.com/lukasthekid/investment-locations-lstm/blob/main/media/init.png)
+
+select a Company based on the ISIN identification number (https://www.investopedia.com/terms/i/isin.asp)
+![alt text](https://github.com/lukasthekid/investment-locations-lstm/blob/main/media/selection.png)
+
+for that company in the specific year, the system is now calculating the best investment opportunities by trying every company that is available for that year to invest in and rank them by the highest chance.
+![alt text](https://github.com/lukasthekid/investment-locations-lstm/blob/main/media/rec.png)
