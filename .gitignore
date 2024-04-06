@@ -30,6 +30,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.idea
 
 
 *.csv
@@ -89,6 +90,9 @@ target/
 # IPython
 profile_default/
 ipython_config.py
+
+.DS_Story
+*DS_Store
 
 # pyenv
 #   For a library or package, you might want to ignore these files since the code is
